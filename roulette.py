@@ -39,6 +39,7 @@ class Wheel:
     def __init__(self):
         self.bins = tuple(Bin() for i in range(38))
         self.rng = random.Random()
+        self.all_outcomes = {}
 
     def add_outcome(self, number, outcome):
         """
@@ -52,12 +53,18 @@ class Wheel:
         bins[number] = Bin(bin_)
         self.bins = tuple(bins)
 
+        if not outcome.name in self.all_outcomes:
+            self.all_outcomes[outcome.name] = outcome
 
     def next(self):
         return self.rng.choice(self.bins)
 
     def get(self, bin_num):
         return self.bins[bin_num]
+
+    def get_outcome(self, name):
+        if name in self.all_outcomes:
+            return self.all_outcomes[name]
 
 
 class BinBuilder:

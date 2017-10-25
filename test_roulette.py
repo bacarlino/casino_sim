@@ -76,7 +76,6 @@ class TestWheel(unittest.TestCase):
         self.assertIn(self.outcome1, self.wheel.bins[0])
         self.assertIn(self.outcome3, self.wheel.bins[37])
 
-
     def test_rng_next(self):
         """Seeds a test random number generator for testing"""
 
@@ -93,6 +92,23 @@ class TestWheel(unittest.TestCase):
         self.assertIn(self.outcome2, self.wheel.get(0))
         self.assertIn(self.outcome3, self.wheel.get(37))
 
+    def test_add_outcomes_to_all_outcomes(self):
+        self.builder.build_bins(self.wheel)
+        oc_dict = self.wheel.all_outcomes
+
+        self.assertTrue(oc_dict["Five Bet"] == self.outcome1)
+        self.assertTrue(oc_dict["Straight 0"] == self.outcome2)
+        self.assertTrue(oc_dict["Straight 00"] == self.outcome3)
+
+    def test_get_outcome_from_all_outcomes(self):
+        self.builder.build_bins(self.wheel)
+        oc1 = self.wheel.get_outcome("Five Bet")
+        oc2 = self.wheel.get_outcome("Straight 0")
+        oc3 = self.wheel.get_outcome("Straight 00")
+
+        self.assertTrue(oc1 == self.outcome1)
+        self.assertTrue(oc2 == self.outcome2)
+        self.assertTrue(oc3 == self.outcome3)
 
 
 class TestBinBuilder(unittest.TestCase):
@@ -214,6 +230,28 @@ class TestBinBuilder(unittest.TestCase):
 
         for bin_ in range(38):
             self.assertTrue(len(self.wheel.bins[bin_]) > 0)
+
+
+class TestBet(unittest.TestCase):
+
+    def setUp(self):
+        self.outcome1 = Outcome("Five Bet", 6)
+        self.outcome2 = Outcome("Straight 0", 35)
+        self.outcome3 = Outcome("Red", 1)
+
+        self.bet1 = Bet(32, self.outcome1)
+        self.bet2 = Bet(7, self.outcome2)
+        self.bet3 = Bet(500, self.outcome3)
+
+    def test_win_amount(self):
+        self.assertTrue(self.bet1.win_amount() == 224)
+        self.assertTrue(self.bet2.win_amount() == 252)
+        self.assertTrue(self.bet3.win_amount() == 1000)
+
+    def test_lose_amount(self):
+        self.assertTrue(self.bet1.lose_amount() == 32)
+        self.assertTrue(self.bet2.lose_amount() == 7)
+        self.assertTrue(self.bet3.lose_amount() == 500)
 
 
 if __name__ == '__main__':
